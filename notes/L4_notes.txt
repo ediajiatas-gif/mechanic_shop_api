@@ -1,0 +1,22 @@
+Application Factory Pattern in Flask API Development
+
+Application Factory Pattern
+
+Design Pattern to create and configure instances of an application, instead of creating a Flask app object directly at the top level
+    - involves functions that return a new instance of the app
+
+Advantages
+
+- Modularity: Incorporates blueprints
+- Scalability: Increases organization to scale and maintain our API
+- Configuration: Allows different configs for testing, development, and production without altering the core app code
+- Testing: Easier to create multiple instances of the app for testing purposes, each test can create its own isolated app instance
+
+Application Factory Pattern Basic Structure
+    create_app(): A function that initializes the Flask application and returns it, located in the application folder's init file
+    extensions.py: A file used to initialize any other miscellaneous flask extensions (i.e. Flask-Limiter, Flask-cache, etc.)
+    blueprints: Are collections of related routes that provides organization and separation of concerns
+    models: This is the folder we create our Models
+    app.py: Imports our create_app() from application and runs it, instantiating our app
+    config.py: Holds our configurations to be used in our create_app() configure the app.
+
