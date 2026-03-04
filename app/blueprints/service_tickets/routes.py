@@ -4,10 +4,13 @@ from marshmallow import ValidationError
 from sqlalchemy import select
 from app.models import ServiceTicket, Mechanic, db
 from . import service_ticket_bp
+from app.extensions import limiter, cache
+from app.utils.util import encode_token, token_required
 
 
 # Get all service tickets
 @service_ticket_bp.route("/", methods=['GET'])
+@cache.cached(timeout=60)
 def get_tickets():
     query = select(ServiceTicket)
     tickets = db.session.execute(query).scalars().all()
@@ -54,6 +57,7 @@ def assign_mechanic(ticket_id, mechanic_id):
 
 # Remove a mechanic from a service ticket
 @service_ticket_bp.route("/<int:ticket_id>/remove-mechanic/<int:mechanic_id>", methods=['PUT'])
+@token_required
 def remove_mechanic(ticket_id, mechanic_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     mechanic = db.session.get(Mechanic, mechanic_id)

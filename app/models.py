@@ -20,6 +20,7 @@ class Customer(db.Model):
     name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), nullable=False, unique=True)
     phone = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(250), nullable=False)
 
     # One-to-many relationship: Customer → ServiceTickets
     service_tickets = db.relationship(

@@ -1,0 +1,26 @@
+Lesson 6: Rate Limiting and Caching
+
+Learning Objectives: 
+- Understanding Flask Limiter: How to rate limiting to protect APIs from abuse, such as excessive traffic, or DDOS attacks
+- Understanding Flask Caching: Use chaching to enchance performance by redusing repetitive db queries and improve response times
+- Implement Flask Limiter: Set up rate limits at a global or route-specific level in a Flask API using Application Factory Pattern
+- Implement Flask Caching: Applying caching routes that involve expensice or repetitive data retrieval using Flask caching
+
+                                            Flask Limiter
+
+What is Flask Limiter?
+- An extension that provides rate limiting to Flask apps, prevents abuse by limiting the number of requests client can make to the API. Protects our API from malicious attacks like DDOS attacks (repetitive request that overwhelm your sever)
+
+How Flask Limiter Works
+- Allows you to set limits per route or globally
+- Syntax: 5 per minute or 100 per hour
+
+
+                                        Flask Chaching
+
+What is Flask-Caching?
+- Flask-Caching is a Flask extension that improves performance by storing the results of expensive or frequently accessed data(API calls) in memory, allowing the app to return cached data instead of repeatedly querying the database.       
+
+Use Cases:
+- Caching API responses to reduce db queries
+- Improving response time for high-traffic endpoints (specific URL in API)

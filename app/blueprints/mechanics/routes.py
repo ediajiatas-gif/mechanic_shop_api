@@ -4,10 +4,13 @@ from marshmallow import ValidationError
 from sqlalchemy import select
 from app.models import Mechanic, db
 from . import mechanic_bp
+from app.extensions import limiter, cache
+from app.utils.util import encode_token, token_required
 
 
 # Get mechanics
 @mechanic_bp.route("/", methods=['GET'])
+@cache.cached(timeout=60)
 def get_mechanics():
     query = select(Mechanic)
     mechanics = db.session.execute(query).scalars().all()
@@ -26,6 +29,7 @@ def get_mechanic(mechanic_id):
 
 # Create mechanic
 @mechanic_bp.route("/", methods=['POST'])  # Creates API endpoint
+@limiter.limit("5 per day")
 def create_mechanic():  # Function that runs when the endpoint is called
     try:  # Validates Data
         mechanic_data = mechanic_schema.load(request.json)  # takes JSON from request and validates with Marshmallow
@@ -46,6 +50,7 @@ def create_mechanic():  # Function that runs when the endpoint is called
 
 # Update mechanic by Id
 @mechanic_bp.route("/<int:mechanic_id>", methods=['PUT'])
+@token_required
 def update_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanic, mechanic_id)
     
@@ -67,6 +72,7 @@ def update_mechanic(mechanic_id):
         
 # Delete mechanic
 @mechanic_bp.route("/<int:mechanic_id>", methods=['DELETE'])
+@token_required
 def delete_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanic, mechanic_id)
     

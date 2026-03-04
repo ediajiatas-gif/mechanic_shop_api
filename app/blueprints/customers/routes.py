@@ -1,13 +1,48 @@
-from .schemas import customer_schema, customers_schema
+from .schemas import customer_schema, customers_schema, login_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from sqlalchemy import select
-from app.models import Customer, db
+from app.models import Customer, db, ServiceTicket
+from app.blueprints.service_tickets.schemas import service_tickets_schema
 from . import customer_bp
+from app.extensions import limiter, cache
+from app.utils.util import encode_token, token_required
 
+@customer_bp.route("/login", methods=['POST'])
+def login():
+    try:
+        credentials = login_schema.load(request.get_json())
+        email = credentials['email']
+        password = credentials['password']
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    query =select(Customer).where(Customer.email == email) 
+    customer = db.session.execute(query).scalar_one_or_none() #Query customer table for a customer with this email
+
+    if customer and customer.password == password: #if we have a customer associated with the customername, validate the password
+        token = encode_token(customer.id)
+
+        response = {
+            "status": "success",
+            "message": "Successfully Logged In",
+            "token": token
+        }
+        return jsonify(response), 200
+    else:
+        return jsonify({'messages': "Invalid email or password"}), 401
+
+# Get tickets for the authenticated customer
+@customer_bp.route("/my-tickets", methods=['GET'])
+@token_required
+def get_my_tickets(customer_id):
+    query = select(ServiceTicket).where(ServiceTicket.customer_id == customer_id)
+    tickets = db.session.execute(query).scalars().all()
+    return jsonify(service_tickets_schema.dump(tickets)), 200
 
 # Get Customers
 @customer_bp.route("/", methods=['GET'])
+@cache.cached(timeout=60)
 def get_customers():
     query = select(Customer)
     customers = db.session.execute(query).scalars().all()
@@ -26,6 +61,7 @@ def get_customer(customer_id):
 
 # Create Customer
 @customer_bp.route("/", methods=['POST'])  # Creates API endpoint
+@limiter.limit("5 per day") # Client can only attempt to create 3 users per hour
 def create_customer():  # Function that runs when the endpoint is called
     try:  # Validates Data
         customer_data = customer_schema.load(request.json)  # takes JSON from request and validates with Marshmallow
@@ -46,6 +82,7 @@ def create_customer():  # Function that runs when the endpoint is called
 
 # Update Customer by Id
 @customer_bp.route("/<int:customer_id>", methods=['PUT'])
+@token_required
 def update_customer(customer_id):
     customer = db.session.get(Customer, customer_id)
     
@@ -66,7 +103,8 @@ def update_customer(customer_id):
     return jsonify(customer_schema.dump(customer)), 200
         
 # Delete Customer
-@customer_bp.route("/<int:customer_id>", methods=['DELETE'])
+@customer_bp.route("/", methods=['DELETE'])
+@token_required
 def delete_customer(customer_id):
     customer = db.session.get(Customer, customer_id)
     

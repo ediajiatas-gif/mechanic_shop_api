@@ -1,0 +1,30 @@
+Lesson 7: Token Authentication 
+
+Learning Objectives:
+
+- Understand the purpose and mechanics of token Authentication in securring API access
+- Learn the process of token creation, exchange, validation, encoding with user-specific details
+- Implement token Authentication in Flask API by:
+    - developing an encode_token function for token generation
+    - creating a token_required decorator to secure API routes
+    - integrating these features into an application following best practices
+- Apply token authentication to protect routes and manage user-specific data securely
+
+
+What is Token Authentication?
+
+- A security mechanism where a server issues a token (a string) to a client after successful authentication. The client then uses that token to make authorized requests.
+
+Why use Token Authentication?
+
+- Stateless: no need to store user session data on the server
+- Commonly used in modern APIs, especially within single page apps (SPAs) and mobile apps
+
+Implementing Token Authentication in Flask
+
+- We add utils/ folder for utility functions in our apps folder
+- Install packages: python-jose
+
+Creating the token_required decorator
+
+- Token decorator: function wraps around another function, adding functionality to it without modifying the original function. 
