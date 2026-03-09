@@ -1,7 +1,8 @@
 from .schemas import mechanic_schema, mechanics_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
-from sqlalchemy import select
+from sqlalchemy import select, func
+from sqlalchemy.orm import selectinload
 from app.models import Mechanic, db
 from . import mechanic_bp
 from app.extensions import limiter, cache
@@ -82,3 +83,30 @@ def delete_mechanic(mechanic_id):
     db.session.delete(mechanic)
     db.session.commit()
     return jsonify({"message": f'mechanic id: {mechanic_id}, successfully deleted'}), 200
+
+# Returns list of mechanics  in order of who has worked on the most tickets
+@mechanic_bp.route("/most_tickets", methods=['GET'])
+def get_mechanics_by_ticket_count():
+    
+    query = select(Mechanic).options(selectinload(Mechanic.service_tickets))
+    mechanics = db.session.execute(query).scalars().all()
+    
+    # Sort mechanics by the number of service tickets using a lambda function
+    mechanics = sorted(mechanics, key=lambda mechanic: len(mechanic.service_tickets), reverse=True)
+    
+    return jsonify(mechanics_schema.dump(mechanics)), 200
+
+# Get Mechanic by Name
+@mechanic_bp.route("/search", methods=['GET'])
+def search_mechanic():
+    name = request.args.get("name")
+    if not name:
+        return jsonify({"error": "Name parameter is required"}), 400
+    
+    query = select(Mechanic).where(Mechanic.name.ilike(f'%{name}%')).options(selectinload(Mechanic.service_tickets))
+    mechanics = db.session.execute(query).scalars().all()
+    
+    if not mechanics:
+        return jsonify({"message": f"No mechanics found with name containing '{name}'"}), 404
+    
+    return jsonify(mechanics_schema.dump(mechanics)), 200

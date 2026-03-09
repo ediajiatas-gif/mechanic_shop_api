@@ -8,6 +8,7 @@ from . import customer_bp
 from app.extensions import limiter, cache
 from app.utils.util import encode_token, token_required
 
+# Login Route for Customers
 @customer_bp.route("/login", methods=['POST'])
 def login():
     try:
@@ -42,12 +43,19 @@ def get_my_tickets(customer_id):
 
 # Get Customers
 @customer_bp.route("/", methods=['GET'])
-@cache.cached(timeout=60)
+# @cache.cached(timeout=60)
 def get_customers():
+    # handle pagination parameters safely
+    page = request.args.get('page', type=int)
+    per_page = request.args.get('per_page', type=int)
     query = select(Customer)
+
+    if page and per_page:
+        paged = db.paginate(query, page=page, per_page=per_page)
+        return jsonify(customers_schema.dump(paged.items)), 200
+
+    # fallback: return all records
     customers = db.session.execute(query).scalars().all()
-    
-                                   # turns object into dictionary
     return jsonify(customers_schema.dump(customers)), 200
 
 # Get a specific customer by ID

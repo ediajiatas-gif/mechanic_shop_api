@@ -1,0 +1,33 @@
+qLesson 8: Advances Queries Utilizing SQLAlchemy Relationships
+
+Learning Objectives:
+
+- Recap: Concepts of one-to-many and many-to-many relationships in SQLAlchemy. 
+- Explore how to access related data data using SQLAlchemy relationship attributes as Python lists
+- Learn to modify many-to-many relationships by appending and removing items from relationship lists
+- Implement custom sorting for relationships using Python's .sort() method and lambda functions for insightful queries
+- Incorporate query parameters into API endpoints to enable filtering, searching, and sorting functionality
+- Apply pagination techniques (limit and offset) for efficient data retrieval in API design
+
+Recap of SQLAlchemy Relationships
+
+- One-to-many: One record in a table can relate to many records in another table (e.g., one customer can have many service tickets).
+- Many-to-many: Many records in one table relate to many records in another table (e.g., mechanics can work on multiple tickets, and tickets can have multiple mechanics).
+
+What is Pagination:
+
+- Divides large sets of data into manageable chunks or pages. Prevents APIs from overwhelming users with too much data at once
+- Enhances performance and user experience by delivering smaller results, more digestable portions, and reduces server load
+
+Pagination Methods: Limit and Offset: Most common methods for pagination
+
+- Limit: specifies how many results to return (page size)
+- Offset or Page: Skips certain number of results (page number)
+    Example: (https://api.example.com/products?limit=10&offset=20)
+        - returns 10 products, starting from the 21st product (offset 20)
+
+Other technique: Page and Page size
+    Example: (https://api.example.com/products?page=2&page_size=10)
+        -   Similar to limit and offset but uses page and page_size.
+        -   This fetches the second page with 10 results per page.
+

@@ -10,6 +10,13 @@ service_mechanics = db.Table(
     db.Column('mechanic_id', db.Integer, db.ForeignKey('mechanics.id'), primary_key=True)
 )
 
+# Association table for Many-to-Many between service_tickets and Inventory
+service_inventory = db.Table(
+    'service_inventory',
+    db.Column('ticket_id', db.Integer, db.ForeignKey('service_tickets.id'), primary_key=True),
+    db.Column('inventory_id', db.Integer, db.ForeignKey('inventory.id'), primary_key=True)
+)
+
 # ------------------ Models ---------------------
 
 # Customer model
@@ -44,6 +51,11 @@ class ServiceTicket(db.Model):
     mechanics = db.relationship(
         "Mechanic", secondary=service_mechanics, back_populates="service_tickets"
     )
+    
+    # Many-to-Many: Inventory ↔ ServiceTickets
+    inventory = db.relationship(
+        "Inventory", secondary=service_inventory, back_populates="service_tickets"
+    )  
 
 # Mechanic model
 class Mechanic(db.Model):
@@ -58,4 +70,15 @@ class Mechanic(db.Model):
     # Many-to-Many: Mechanics ↔ ServiceTickets
     service_tickets = db.relationship(
         "ServiceTicket", secondary=service_mechanics, back_populates="mechanics"
+    )
+    
+class Inventory(db.Model):
+    __tablename__ = 'inventory'
+    id = db.Column(db.Integer, primary_key=True)
+    part_name = db.Column(db.String(250), nullable=False, unique=True)
+    price = db.Column(db.Float, nullable=False)
+    
+    # Many-to-Many: Inventory ↔ ServiceTickets
+    service_tickets = db.relationship(
+        "ServiceTicket", secondary=service_inventory, back_populates="inventory"
     )
