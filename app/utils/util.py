@@ -6,6 +6,7 @@ from flask import request, jsonify
 
 SECRET_KEY = "a super secret, secret key"
 
+# Updated token_required decorator (Option 1)
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -20,24 +21,24 @@ def token_required(f):
         try:
             # Decode the token
             data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            user_id = data['sub']  # Fetch the user ID
+            # Pass user_id as a keyword argument
+            kwargs['user_id'] = data['sub']  
             
         except jose.exceptions.ExpiredSignatureError:
-             return jsonify({'message': 'Token has expired!'}), 401
+            return jsonify({'message': 'Token has expired!'}), 401
         except jose.exceptions.JWTError:
-             return jsonify({'message': 'Invalid token!'}), 401
+            return jsonify({'message': 'Invalid token!'}), 401
 
-        return f(user_id, *args, **kwargs)
+        # Call the route with all args and kwargs
+        return f(*args, **kwargs)
 
-        
     return decorated
 
-def encode_token(user_id): #using unique pieces of info to make our tokens user specific
-    payload = { #info packed into token.    #token expires 1 hour after created
-        'exp': datetime.now(timezone.utc) + timedelta(days=0,hours=1), #Setting the expiration time to an hour past now
-        'iat': datetime.now(timezone.utc), #Issued at
-        'sub':  str(user_id) #This needs to be a string or the token will be malformed and won't be able to be decoded.
+def encode_token(user_id):
+    payload = {
+        'exp': datetime.now(timezone.utc) + timedelta(hours=1),
+        'iat': datetime.now(timezone.utc),
+        'sub': str(user_id)
     }
-                                            # Hashing
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
     return token

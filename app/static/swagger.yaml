@@ -1,0 +1,258 @@
+swagger: '2.0'
+
+info: 
+  title: "Mechanic Shop API"
+  description: |
+    The Mechanic Shop API allows a repair shop to manage customers, mechanics,
+    service tickets, and parts inventory. It provides RESTful endpoints for creating,
+    reading, updating, and deleting records related to shop operations.
+    Mechanics can be assigned to service tickets, and inventory parts can be associated
+    with repair jobs.
+  version: "1.0.0"
+
+host: "127.0.0.1:5000"
+
+schemes:
+  - "http"
+
+# The API consumes JSON for requests
+consumes:
+  - "application/json"
+
+# The API produces JSON responses
+produces:
+  - "application/json"
+
+# Defines how the API handles authentication and which endpoints need it
+securityDefinitions: 
+  bearerAuth: # name of the security scheme
+    type: apiKey # indicates that security scheme is an API key (represents our token)
+    name: authorization # specifies name of the API key 
+    in: header # indicates where the API key should be included 
+
+# Section to define all API endpoints
+paths:
+
+  # Login endpoint for customers
+  /customers/login:
+    post:
+      tags:
+        - Members  # Will put this endpoint in the Members category in documentation
+      summary: "Login endpoint (generates token)"
+      description: "Validates customer credentials, generates and returns a member-specific token"
+      parameters:
+        - in: body
+          name: body
+          description: "Login Credentials"
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+
+  # Endpoint to create/register new customer
+  /customers:
+    post:
+      tags:
+        - Customers  # Will put this endpoint in the Customers category in documentation
+      summary: "Endpoint to create/register new customer"
+      description: "Endpoint to create new customer in Mechanic Shop system, emails must be unique."
+      parameters:  # shows what is required to make this request
+        - in: body  # request body
+          name: body  # name of parameter
+          description: "Information required to create new customer"
+          required: true 
+          schema:
+            $ref: "#/definitions/CreateCustomerPayload"
+      responses:
+        201:
+          description: "Successful Customer Creation"
+          schema:
+            $ref: "#/definitions/CreateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: "John Doe"
+              email: "johndoe@email.com"
+              phone: "+1-800-800-8000"
+              password: "password123"
+
+    # Endpoint to get all Customers
+    get:
+      tags: 
+        - Customers
+      summary: "Returns all customers"
+      description: "Endpoint to retrieve a list of all Customers"
+      responses:
+        200:
+          description: "Retrieved Customers Successfully"
+          schema:
+            $ref: "#/definitions/AllCustomers"
+
+  # Endpoint to update Customer by ID
+  /customers/{customer_id}:
+    put:
+      tags:
+        - Customers
+      summary: "Endpoint to update Customer"
+      description: "Token-authenticated route to update a customer by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: customer_id
+          type: integer
+          required: true
+          description: "ID of the customer to update"
+        - in: body
+          name: body
+          description: "Customer fields to update"
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateCustomerPayload"
+      responses:
+        200:
+          description: "Successfully updated Customer"
+          schema:
+            $ref: "#/definitions/UpdateCustomerResponse"
+          examples:
+            application/json:
+              id: 1
+              name: "John Doe"
+              email: "johndoe@email.com"
+              phone: "100-011-0123"
+              password: "password123"
+
+  # Endpoint to Delete customer
+    delete:
+      tags:
+        - Members
+      summary: "Enpoint to delete a member"
+      description: "Endpoint to delete a member. Requires token authentication, member must be logged in to delete their account"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "Successfully Deleted member"           
+          schema:
+            $ref: "#/definitions/DeleteMemberResponse"
+          examples:
+            application/json:
+              message: "successfully deleted user <member_id>."
+
+definitions:
+
+  # Model for login credentials
+  LoginCredentials:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - email
+      - password
+
+  # Model for login response
+  LoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+      message:
+        type: "string"
+      status:
+        type: "string"
+
+  # Model for creating a customer (request payload)
+  CreateCustomerPayload:
+    type: "object"
+    properties:
+      name: 
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - name
+      - email
+      - phone
+      - password
+
+  # Model for customer creation response
+  CreateCustomerResponse:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      name: 
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      password:
+        type: "string"
+
+  # GET route definition: list of customers
+  AllCustomers: 
+    type: "array" # we have to indicate that a list of customer objects will be coming through
+    items:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+        name:
+          type: "string"
+        email:
+          type: "string"
+        phone:
+          type: "string"
+        password:
+          type: "string"
+
+  # Model for updating a customer (request payload)
+  UpdateCustomerPayload:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      password:
+        type: "string"
+    required:
+      - name
+      - email
+      - phone
+      - password
+
+  # Model for update response
+  UpdateCustomerResponse:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name:
+        type: "string"
+      email:
+        type: "string"
+      phone:
+        type: "string"
+      password:
+        type: "string"
+
+  DeleteCustomerResponse:
+    type: "object"
+    properties:
+      message: 
+        type: "string"

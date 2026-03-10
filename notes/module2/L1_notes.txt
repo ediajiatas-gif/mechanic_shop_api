@@ -1,0 +1,46 @@
+Test-Driven Development (TDD): TDD prioritizes writing tests for each component before implementing the feature = cleaner, reliable code, helps catch issues early in development. 
+
+API Deployment: Publishing API to the web (making it accessible to users and applications)
+
+CI/CD: Continuous Integration and Continuous Deployment - modern approach to ensure seamless development, testing, and deployment processess
+
+                                Introduction to API Documentation
+
+API Documentation is like a user manual for devs. Comprehensive guide that explains how to use an API, what each endpoint does, and what data formats it expects and returns
+
+                            Importance and Types of API Documentation
+
+Two Types: 
+    1. Internal Documentation: For Devs who are working on the API itself. Includes technical details, code examples that shows how API works under the hood
+    
+    2. External Documentation: For Devs who are using the API in their own apps. Includes. guides, tutorials, examples that show how to integrate API into different applications
+
+                        Best Practices for Effective API Documentation
+
+- Be Clear and Concise: Ensure documetion is easy to read and understand. Use simple language + examples
+- Provide Detailed Examples: Include examples endpoints and data format to demonstrate how to use the API.
+- Keep it up to date: Ensure documetion reflects latest version of API
+- Organize it well: Structure Documentation logically, clear sections and table of contents
+- Offer Support and Feedback: Provide ways for devs to ask questions and give feedback (support email to the top of the documetion)
+
+                            Interactive API Documentation with Swagger
+                    
+Swagger: "Inventory Management system for your API". Helps create, maintain, and organize your API documentation in a structured / user friendly way. Define endpoints, request/response formats, authetication methods more simple using YAML or JSON format
+
+
+                        Generating Interactive Documentation with Swagger
+
+You can generate interactive documentation using Swagger UI. Swagger provides a web-based interface where devs can view your endpoints, test them, and see example requests/responses. Makes it easier for devs to understand how to use your API and intergrate it into their own projects
+
+                            Understand What these sections mean:
+
+paths: all the routes in the API (GET/customers = get all customers)
+parameters: values inside the URL
+requestBody: JSON data the user sends
+responses: what the API returns
+components/schemas: reusable object templates
+
+
+Steps to setup in VSCode
+
+Setup Swagger in app/__init__.py

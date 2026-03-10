@@ -91,22 +91,22 @@ def create_customer():  # Function that runs when the endpoint is called
 # Update Customer by Id
 @customer_bp.route("/<int:customer_id>", methods=['PUT'])
 @token_required
-def update_customer(customer_id):
+def update_customer(customer_id, user_id=None):
+    # customer_id comes from the URL
+    # user_id comes from the token if you want to use it
     customer = db.session.get(Customer, customer_id)
-    
     if not customer:
-        return jsonify({"error": "Customer not found"}), 404  # 404 if no customer
-    
+        return jsonify({"error": "Customer not found"}), 404
+
     try:
         customer_update = customer_schema.load(request.json, partial=True)
     except ValidationError as e:
         return jsonify(e.messages), 400
-    
-    # Only updates the fields that were sent
-    for attr in ['name', 'email', 'phone']:     # only updates the new values
+
+    for attr in ['name', 'email', 'phone', 'password']:
         if getattr(customer_update, attr, None) is not None:
             setattr(customer, attr, getattr(customer_update, attr))
-        
+
     db.session.commit()
     return jsonify(customer_schema.dump(customer)), 200
         
