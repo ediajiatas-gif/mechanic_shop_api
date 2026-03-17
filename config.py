@@ -3,9 +3,12 @@ class DevelopmentConfig:
     DEBUG = True
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = '300'
-    
+
+#For testing our data     
 class TestingConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
+    DEBUG = True
+    CACHE_TYPE = 'SimpleCache'
 
 class ProductionConfig:
     pass
