@@ -51,7 +51,7 @@ def create_mechanic():  # Function that runs when the endpoint is called
 
 # Update mechanic by Id
 @mechanic_bp.route("/<int:mechanic_id>", methods=['PUT'])
-@token_required
+# @token_required
 def update_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanic, mechanic_id)
     
@@ -73,7 +73,7 @@ def update_mechanic(mechanic_id):
         
 # Delete mechanic
 @mechanic_bp.route("/<int:mechanic_id>", methods=['DELETE'])
-@token_required
+# @token_required
 def delete_mechanic(mechanic_id):
     mechanic = db.session.get(Mechanic, mechanic_id)
     

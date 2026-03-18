@@ -12,9 +12,10 @@ class ServiceTicketSchema(ma.SQLAlchemyAutoSchema):
 
 class CreateServiceTicketSchema(ServiceTicketSchema):
     class Meta:
-        exclude = ('mechanics',)  # Exclude mechanics from creation
+        exclude = ('mechanics', 'inventory')  # Exclude mechanics from creation
         model = ServiceTicket
         include_relationships = True
+        include_fk = True
         load_instance = True
         sqla_session = db.session
 

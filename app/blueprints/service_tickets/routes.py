@@ -16,13 +16,13 @@ def get_tickets():
     tickets = db.session.execute(query).scalars().all()
     return jsonify(service_tickets_schema.dump(tickets)), 200
 
-
 # Create a service ticket
 @service_ticket_bp.route("/", methods=['POST'])
 def create_ticket():
     try:
         ticket_data = create_service_ticket_schema.load(request.json)
     except ValidationError as e:
+        print("Validation Error:", e.messages)
         return jsonify(e.messages), 400
 
     # ensure the ticket has a timestamp; model default will handle it,
@@ -34,7 +34,6 @@ def create_ticket():
     db.session.add(ticket_data)
     db.session.commit()
     return jsonify(service_ticket_schema.dump(ticket_data)), 201
-
 
 # Assign a mechanic to a service ticket
 @service_ticket_bp.route("/<int:ticket_id>/assign-mechanic/<int:mechanic_id>", methods=['PUT'])
@@ -57,7 +56,7 @@ def assign_mechanic(ticket_id, mechanic_id):
 
 # Remove a mechanic from a service ticket
 @service_ticket_bp.route("/<int:ticket_id>/remove-mechanic/<int:mechanic_id>", methods=['PUT'])
-@token_required
+# @token_required
 def remove_mechanic(ticket_id, mechanic_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     mechanic = db.session.get(Mechanic, mechanic_id)
@@ -133,7 +132,6 @@ def edit_ticket_mechanics(ticket_id):
 
 # Add single part to a service ticket
 @service_ticket_bp.route("/<int:ticket_id>/add-part/<int:part_id>", methods=['PUT'])
-@token_required
 def add_part_to_ticket(ticket_id, part_id):
     ticket = db.session.get(ServiceTicket, ticket_id)
     part = db.session.get(Inventory, part_id)
@@ -141,10 +139,10 @@ def add_part_to_ticket(ticket_id, part_id):
     if not ticket or not part:
         return jsonify({"error": "Service ticket or part not found"}), 404
     
-    #Prevent duplicate parts
-    if part in ticket.parts:
+    # Prevent duplicate parts
+    if part in ticket.inventory:
         return jsonify({"error": "Part already added to this ticket"}), 400
     
-    ticket.parts.append(part)
+    ticket.inventory.append(part)
     db.session.commit()
     return jsonify(service_ticket_schema.dump(ticket)), 200

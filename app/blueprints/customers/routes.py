@@ -36,8 +36,8 @@ def login():
 # Get tickets for the authenticated customer
 @customer_bp.route("/my-tickets", methods=['GET'])
 @token_required
-def get_my_tickets(customer_id):
-    query = select(ServiceTicket).where(ServiceTicket.customer_id == customer_id)
+def get_my_tickets(user_id):
+    query = select(ServiceTicket).where(ServiceTicket.customer_id == user_id)
     tickets = db.session.execute(query).scalars().all()
     return jsonify(service_tickets_schema.dump(tickets)), 200
 
@@ -113,12 +113,12 @@ def update_customer(customer_id, user_id=None):
 # Delete Customer
 @customer_bp.route("/", methods=['DELETE'])
 @token_required
-def delete_customer(customer_id):
-    customer = db.session.get(Customer, customer_id)
+def delete_customer(user_id):
+    customer = db.session.get(Customer, user_id)
     
     if not customer:
         return jsonify({"error": "Customer not found"}), 404
     
     db.session.delete(customer)
     db.session.commit()
-    return jsonify({"message": f'Customer id: {customer_id}, successfully deleted'}), 200
+    return jsonify({"message": f'Customer id: {user_id}, successfully deleted'}), 200

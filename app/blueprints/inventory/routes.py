@@ -27,11 +27,12 @@ def get_parts():
 
 # Create Part
 @inventory_bp.route("/", methods=['POST'])  # Creates API endpoint
-@limiter.limit("5 per day") # Client can only attempt to create t parts per hour
+# @limiter.limit("5 per day") # Client can only attempt to create t parts per hour
 def create_part():  # Function that runs when the endpoint is called
     try:  # Validates Data
         inventory_data = inventory_schema.load(request.json)  # takes JSON from request and validates with Marshmallow
     except ValidationError as e:
+        print(e.messages)
         return jsonify(e.messages), 400  # if validation fails, return error message
 
     # Check if part already exists
