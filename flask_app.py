@@ -1,7 +1,7 @@
 from app import create_app
 from app.models import db
 
-app = create_app('DevelopmentConfig') 
+app = create_app('ProductionConfig') 
 
 # Create table
 with app.app_context():
@@ -9,6 +9,6 @@ with app.app_context():
     db.create_all()
 
 # ------------------ Run App ---------------------
+    # app.run() - no longer required because of gunicorn
 
-if __name__ == "__main__":
-    app.run(debug=True)
+#gunicorn flask_app:app (differntiates flask_app and app folder)

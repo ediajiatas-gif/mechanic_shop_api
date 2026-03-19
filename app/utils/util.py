@@ -3,8 +3,9 @@ from jose import jwt
 import jose
 from functools import wraps
 from flask import request, jsonify
-
-SECRET_KEY = "a super secret, secret key"
+import os
+                                            # Temp secret key for Github Test Cases
+SECRET_KEY = os.environ.get('SECRET_KEY') or "super secret secrets"
 
 # Updated token_required decorator (Option 1)
 def token_required(f):
