@@ -19,6 +19,7 @@ marshmallow==4.2.2
 marshmallow-sqlalchemy==1.4.2
 ordered-set==4.1.0
 packaging==26.0
+psycopg2-binary==2.9.11
 pyasn1==0.6.2
 PyJWT==2.11.0
 python-jose==3.5.0
