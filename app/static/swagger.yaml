@@ -49,7 +49,7 @@ paths:
           schema:
             $ref: "#/definitions/LoginResponse"
 
-  /customers:
+  /customers/:
     post:
       tags: [Customers]
       summary: "Create customer"
