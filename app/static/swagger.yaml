@@ -14,14 +14,16 @@ info:
     Authorization: Bearer <token>
   version: "1.0.0"
 
-host: "mechanic-shop-api-ju2i.onrender.com"
 schemes:
-  - "https"
+  - "http"
 
 consumes:
   - "application/json"
 produces:
   - "application/json"
+
+host: "localhost:8000"
+basePath: ""
 
 securityDefinitions:
   bearerAuth:
@@ -302,7 +304,38 @@ paths:
         400:
           description: Validation error
 
-  /{service_ticket_id}:
+  /service-tickets/{service_ticket_id}:
+    get:
+      tags: [ServiceTickets]
+      summary: "Get a single service ticket"
+      parameters:
+        - in: path
+          name: service_ticket_id
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Service ticket details
+          schema:
+            $ref: "#/definitions/ServiceTicketResponse"
+        404:
+          description: Ticket not found
+
+    delete:
+      tags: [ServiceTickets]
+      summary: "Delete a service ticket"
+      parameters:
+        - in: path
+          name: service_ticket_id
+          type: integer
+          required: true
+      responses:
+        200:
+          description: Ticket deleted successfully
+          schema:
+            $ref: "#/definitions/DeleteServiceTicketResponse"
+        404:
+          description: Ticket not found
     put:
       tags: [ServiceTickets]
       summary: "Update a service ticket"
@@ -326,13 +359,13 @@ paths:
         400:
           description: Validation error
 
-  /{ticket_id}/assign-mechanic/{mechanic_id}:
+  /service-tickets/{service_ticket_id}/assign-mechanic/{mechanic_id}:
     put:
       tags: [ServiceTickets]
       summary: "Assign a mechanic to a ticket"
       parameters:
         - in: path
-          name: ticket_id
+          name: service_ticket_id
           type: integer
           required: true
         - in: path
@@ -349,13 +382,13 @@ paths:
         400:
           description: Mechanic already assigned
 
-  /{ticket_id}/remove-mechanic/{mechanic_id}:
+  /service-tickets/{service_ticket_id}/remove-mechanic/{mechanic_id}:
     put:
       tags: [ServiceTickets]
       summary: "Remove a mechanic from a ticket"
       parameters:
         - in: path
-          name: ticket_id
+          name: service_ticket_id
           type: integer
           required: true
         - in: path
@@ -372,13 +405,13 @@ paths:
         400:
           description: Mechanic not assigned
 
-  /{ticket_id}/edit:
+  /service-tickets/{service_ticket_id}/edit:
     put:
       tags: [ServiceTickets]
       summary: "Bulk add/remove mechanics from a ticket"
       parameters:
         - in: path
-          name: ticket_id
+          name: service_ticket_id
           type: integer
           required: true
         - in: body
@@ -395,13 +428,13 @@ paths:
         400:
           description: Validation error
 
-  /{ticket_id}/add-part/{part_id}:
+  /service-tickets/{service_ticket_id}/add-part/{part_id}:
     put:
       tags: [ServiceTickets]
       summary: "Add a part to a service ticket"
       parameters:
         - in: path
-          name: ticket_id
+          name: service_ticket_id
           type: integer
           required: true
         - in: path
@@ -647,3 +680,9 @@ definitions:
         type: array
         items:
           type: integer
+
+  DeleteServiceTicketResponse:
+    type: object
+    properties:
+      message:
+        type: string

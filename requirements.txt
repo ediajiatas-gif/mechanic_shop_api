@@ -22,6 +22,7 @@ packaging==26.0
 psycopg2-binary==2.9.11
 pyasn1==0.6.2
 PyJWT==2.11.0
+python-dotenv==1.2.2
 python-jose==3.5.0
 PyYAML==6.0.3
 rsa==4.9.1
@@ -30,3 +31,4 @@ SQLAlchemy==2.0.47
 typing_extensions==4.15.0
 Werkzeug==3.1.6
 wrapt==2.1.1
+Flask-Cors==6.0.2

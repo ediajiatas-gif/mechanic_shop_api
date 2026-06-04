@@ -1,5 +1,6 @@
 from app import create_app
 from app.models import db
+import os
 
 app = create_app('ProductionConfig') 
 
@@ -9,6 +10,11 @@ with app.app_context():
     db.create_all()
 
 # ------------------ Run App ---------------------
-    # app.run() - no longer required because of gunicorn
+if __name__ == '__main__':
+    # Get port from environment variable or default to 8000
+    port = int(os.environ.get('PORT', 8000))
+    # Use debug mode only in development (when DEBUG env var is set)
+    debug = os.environ.get('DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug, host='0.0.0.0', port=port)
 
-#gunicorn flask_app:app (differntiates flask_app and app folder)
+#gunicorn flask_app:app (differentiates flask_app and app folder)
