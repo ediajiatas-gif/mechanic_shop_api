@@ -470,6 +470,8 @@ definitions:
         type: string
       message:
         type: string
+      customer:
+        $ref: "#/definitions/CustomerResponse"
 
   CustomerPayload:
     type: object
