@@ -6,8 +6,12 @@ app = create_app('ProductionConfig')
 
 # Create table
 with app.app_context():
-    # db.drop_all() 
-    db.create_all()
+    try:
+        # db.drop_all() 
+        db.create_all()
+    except Exception as e:
+        print(f"Database initialization warning: {e}")
+        # Don't crash on database errors - tables may already exist on Render
 
 # ------------------ Run App ---------------------
 if __name__ == '__main__':

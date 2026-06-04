@@ -12,9 +12,16 @@ class TestingConfig:
     CACHE_TYPE = 'SimpleCache'
 
 class ProductionConfig:
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'SQLALCHEMY_DATABASE_URI',
-        'sqlite:///mechanic_shop.db'
-    )
+    # Get database URI from environment variable
+    _database_uri = os.environ.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///mechanic_shop.db')
+    
+    # Handle PostgreSQL SSL for Render
+    if _database_uri and _database_uri.startswith('postgresql'):
+        # Add SSL mode for PostgreSQL connections
+        SQLALCHEMY_DATABASE_URI = _database_uri + '?sslmode=require'
+    else:
+        SQLALCHEMY_DATABASE_URI = _database_uri
+    
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
     CACHE_TYPE = 'SimpleCache'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
