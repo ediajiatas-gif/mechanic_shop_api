@@ -70,7 +70,7 @@ def get_customer(customer_id):
 
 # Create Customer
 @customer_bp.route("/", methods=['POST'])  # Creates API endpoint
-@limiter.limit("5 per day") # Client can only attempt to create 3 users per hour
+# @limiter.limit("5 per day") # Client can only attempt to create 3 users per hour
 def create_customer():  # Function that runs when the endpoint is called
     try:  # Validates Data
         customer_data = customer_schema.load(request.json)  # takes JSON from request and validates with Marshmallow
