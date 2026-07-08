@@ -25,3 +25,9 @@ class ProductionConfig:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
     CACHE_TYPE = 'SimpleCache'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Prevent stale/dropped connections on Render's free-tier Postgres
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,
+        'pool_recycle': 280,
+    }
