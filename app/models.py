@@ -71,7 +71,8 @@ class Mechanic(db.Model):
     service_tickets = db.relationship(
         "ServiceTicket", secondary=service_mechanics, back_populates="mechanics"
     )
-    
+
+# Inventory model
 class Inventory(db.Model):
     __tablename__ = 'inventory'
     id = db.Column(db.Integer, primary_key=True)

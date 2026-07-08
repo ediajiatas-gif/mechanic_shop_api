@@ -9,7 +9,7 @@ from app.utils.util import token_required
 
 # Get Parts within Inventory
 @inventory_bp.route("/", methods=['GET'])
-# @cache.cached(timeout=60)
+@cache.cached(timeout=60)
 def get_parts():
     # handle pagination parameters safely
     page = request.args.get('page', type=int)

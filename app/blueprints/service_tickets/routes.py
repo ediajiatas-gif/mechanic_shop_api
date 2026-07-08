@@ -72,6 +72,7 @@ def remove_mechanic(ticket_id, mechanic_id):
 
     return jsonify(service_ticket_schema.dump(ticket)), 200
 
+# Update Ticket by Id
 @service_ticket_bp.route("/<int:service_ticket_id>", methods=['PUT'])
 def edit_ticket(service_ticket_id):
     service_ticket = db.session.get(ServiceTicket, service_ticket_id)

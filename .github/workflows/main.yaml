@@ -58,3 +58,14 @@ jobs: # Defines the jobs that make up the workflow
 
       - name: Run tests # name of step
         run: python -m unittest discover -s tests -p 'test_*.py' # shell command to run all unit tests in Python located in tests directory, looking for files matching the pattern starting with test_ with anything after ending in '.py'
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          curl -X POST "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json"

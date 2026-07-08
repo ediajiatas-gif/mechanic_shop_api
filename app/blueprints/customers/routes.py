@@ -44,7 +44,7 @@ def get_my_tickets(user_id):
 
 # Get Customers
 @customer_bp.route("/", methods=['GET'])
-# @cache.cached(timeout=60)
+@cache.cached(timeout=60)
 def get_customers():
     # handle pagination parameters safely
     page = request.args.get('page', type=int)
@@ -70,7 +70,7 @@ def get_customer(customer_id):
 
 # Create Customer
 @customer_bp.route("/", methods=['POST'])  # Creates API endpoint
-# @limiter.limit("5 per day") # Client can only attempt to create 3 users per hour
+@limiter.limit("5 per day") # Client can only attempt to create 3 users per hour
 def create_customer():  # Function that runs when the endpoint is called
     try:  # Validates Data
         customer_data = customer_schema.load(request.json)  # takes JSON from request and validates with Marshmallow
@@ -86,7 +86,7 @@ def create_customer():  # Function that runs when the endpoint is called
     # Save the new customer object directly (customer_data is already a Customer object)
     db.session.add(customer_data)
     db.session.commit()  # Save customer to db
-
+ 
     return jsonify(customer_schema.dump(customer_data)), 201  # returns customer as JSON with 201 Resource created
 
 # Update Customer by Id
